@@ -4,7 +4,6 @@
     var h = 6;
     var imageBox = document.querySelector('.image-block');
     var blockContainer = document.querySelector(".blocks-container");
-    var blocks = blockContainer.querySelectorAll(".block");
     var readyContainer = blockContainer.querySelector(".ready-container");
     var wayToImage = 'url("./images/image_' + (getRandomInt(3)+1) + '.png")';
     imageBox.style.backgroundImage = wayToImage;
@@ -23,8 +22,10 @@
     }
 
     function onMouseUp(){
-        currentBlock.style.zIndex = 1;
-        currentBlock = null;
+        if (currentBlock){
+            currentBlock.style.zIndex = 2;
+            currentBlock = null;
+        }
     }
 
     function onMouseDown(event){
@@ -34,7 +35,6 @@
             currentBlock.style.zIndex = 0;
         }
     }
-
     function mouseUpReady(event){
         readyBlock = event.target;
         if (currentBlock){
@@ -49,16 +49,18 @@
             onMouseUp();
         }
     }
-
     function checkWin(){
+        var blocks = blockContainer.querySelectorAll(".block"); 
         isWin = true;
         blocks.forEach(element => {
             if (element.isReady === false)
-                isWin = false;
+                {
+                    console.log(isWin);
+                    isWin = false;
+                }
         return isWin;
         });
     }
-
     function generateBlocks(){
         for (let y = 0; y < h; y++){
             for (let x = 0; x < w; x++){
@@ -95,7 +97,6 @@
             }
         }
     }
-
     document.addEventListener('mousemove', onMouseMove);
     generateBlocks();
 })();
