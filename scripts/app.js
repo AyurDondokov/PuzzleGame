@@ -9,34 +9,45 @@
     imageBox.style.backgroundImage = wayToImage;
     var currentBlock = null;
     var readyBlock = null;
-    
+    var blocks = null;
+    var offsetX = 25;
+    var offsetY = parseInt(getComputedStyle(imageBox).marginBottom) + parseInt(getComputedStyle(imageBox).height) + 25;
+
     function getRandomInt(max) {
         return Math.floor(Math.random() * max);
     }
-
     function onMouseMove(event){
         if (currentBlock !== null){
-            currentBlock.style.left = event.pageX-25 + "px";
-            currentBlock.style.top = event.pageY-325 + "px" ;
+            currentBlock.style.left = event.pageX-offsetX + "px";
+            currentBlock.style.top = event.pageY-offsetY + "px" ;
         }
     }
 
-    function onMouseUp(){
+    function onMouseUp(event){
         if (currentBlock){
             currentBlock.style.zIndex = 2;
+            elemBelow = event.target;
+            if (elemBelow.classList.contains('ready-block'))
+                mouseUpReady(elemBelow);
+            currentBlock.style.pointerEvents='auto';
             currentBlock = null;
         }
     }
 
     function onMouseDown(event){
         if (event.target.isReady === false){
+            blocks.forEach(element => {
+                element.style.zIndex = 1;
+            })
             currentBlock = event.target;
             console.log(currentBlock);
-            currentBlock.style.zIndex = 0;
+            currentBlock.style.zIndex = 2;
+            currentBlock.style.pointerEvents='none';
+            
         }
     }
-    function mouseUpReady(event){
-        readyBlock = event.target;
+    function mouseUpReady(block){
+        readyBlock = block;
         if (currentBlock){
             if (readyBlock.x === currentBlock.x && readyBlock.y === currentBlock.y){
                 currentBlock.style.top = readyBlock.style.top;
@@ -46,12 +57,10 @@
                     alarm("Вы победили!");
                 }
             }
-            onMouseUp();
         }
     }
     function checkWin(){
-        var blocks = blockContainer.querySelectorAll(".block"); 
-        isWin = true;
+        let isWin = true;
         blocks.forEach(element => {
             if (element.isReady === false)
                 {
@@ -72,31 +81,28 @@
                 item.style.backgroundImage = wayToImage;
                 item.style.backgroundPositionX = -x*50 + "px";
                 item.style.backgroundPositionY = -y*50 + "px";
-                item.style.top = blockContainer.style.top + getRandomInt(h)*50 + "px";
-                item.style.left = getRandomInt(w)*50+450 + "px";
+                item.style.top = Math.random() * 300 + "px";
+                item.style.left = 450 + Math.random() * 450 + "px";
                 item.addEventListener("mouseup", onMouseUp);
                 item.addEventListener("mousedown", onMouseDown);
-
                 blockContainer.append(item);
-            }
-        }
-        for (let y = 0; y < h; y++){
-            for (let x = 0; x < w; x++){
-                let item = document.createElement('span');
-                item.className = 'ready-block';            
-                item.x = x;
-                item.y = y;
-                item.style.backgroundImage = wayToImage;
-                item.style.backgroundPositionX = -x*50 + "px";
-                item.style.backgroundPositionY = -y*50 + "px";
-                item.style.top = blockContainer.style.top + y*50 + "px";
-                item.style.left = x*50 + "px";
-                item.addEventListener("mouseup", mouseUpReady);
 
-                readyContainer.append(item);
+                let readyCell = document.createElement('span');
+                readyCell.className = 'ready-block';            
+                readyCell.x = x;
+                readyCell.y = y;
+                readyCell.style.backgroundImage = wayToImage;
+                readyCell.style.backgroundPositionX = -x*50 + "px";
+                readyCell.style.backgroundPositionY = -y*50 + "px";
+                readyCell.style.top = blockContainer.style.top + y*50 + "px";
+                readyCell.style.left = x*50 + "px";
+
+                readyContainer.append(readyCell);
             }
         }
+        blocks = blockContainer.querySelectorAll('.block');
     }
     document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
     generateBlocks();
 })();

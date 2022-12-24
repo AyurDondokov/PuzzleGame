@@ -9,12 +9,13 @@ body{
     background-image: url("../images/image_2.png");
     width: 450px;
     height: 300px;
+    margin-bottom: 100px;
 }
 
 .blocks-container{
     display: block;
     position: relative;
-    margin: 0 auto;
+    margin-left: auto;
     height: 300px;
 }
 
